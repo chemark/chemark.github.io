@@ -1,15 +1,12 @@
 {
   "name": "xingshuhao-blog",
   "version": "1.0.0",
-  "main": "index.js",
+  "description": "我的星树浩博客",
   "scripts": {
-    "start": "eleventy --serve"
+    "start": "eleventy --serve",
+    "build": "eleventy"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
-  "devDependencies": {
-    "@11ty/eleventy": "^3.0.0"
+  "dependencies": {
+    "@11ty/eleventy": "^2.0.1"
   }
 }

@@ -1,51 +1,45 @@
 <!DOCTYPE html>
 <html lang="zh">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>{{ title }}</title>
-  <style>
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
-      max-width: 700px;
-      margin: 0 auto;
-      padding: 2em;
-      line-height: 1.8;
-    }
-    img.avatar {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      display: block;
-      margin: 0 auto;
-    }
-    h1 {
-      text-align: center;
-      font-size: 1.8em;
-      margin: 0.5em 0;
-    }
-    hr {
-      margin: 2em 0;
-    }
-    ul {
-      padding-left: 1.2em;
-    }
-    li {
-      margin-bottom: 0.6em;
-    }
-    a {
-      text-decoration: none;
-      color: #007acc;
-    }
-    a:hover {
-      text-decoration: underline;
-    }
-  </style>
-</head>
-<body>
-  <img src="/img/avatar.png" alt="头像" class="avatar" />
-  <h1>{{ title }}</h1>
+  <head>
+    <meta charset="UTF-8" />
+    <title>{{ title }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      body {
+        max-width: 700px;
+        margin: 2rem auto;
+        padding: 1rem;
+        font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+        line-height: 1.6;
+      }
+      h1, h2 {
+        margin-bottom: 0.5em;
+      }
+      hr {
+        margin: 2rem 0;
+      }
+      ul {
+        padding-left: 1.5rem;
+      }
+    </style>
+  </head>
+  <body>
+    {% if title %}
+      <h1>{{ title }}</h1>
+    {% endif %}
 
-  {{ content }}
-</body>
+    {{ content | safe }}
+
+    {% if collections.posts %}
+      <hr />
+      <ul>
+        {% for post in collections.posts | reverse %}
+          <li>
+            {{ post.date | date("yy.MM.dd") }} -
+            <a href="{{ post.url }}">{{ post.data.title }}</a>
+          </li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  </body>
 </html>

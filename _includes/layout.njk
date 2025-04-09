@@ -2,44 +2,25 @@
 <html lang="zh">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{{ title }}</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <style>
-      body {
-        max-width: 700px;
-        margin: 2rem auto;
-        padding: 1rem;
-        font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
-        line-height: 1.6;
-      }
-      h1, h2 {
-        margin-bottom: 0.5em;
-      }
-      hr {
-        margin: 2rem 0;
-      }
-      ul {
-        padding-left: 1.5rem;
-      }
-    </style>
   </head>
-  <body>
-    {% if title %}
+  <body style="max-width: 720px; margin: 40px auto; font-family: -apple-system, BlinkMacSystemFont, Helvetica, sans-serif; line-height: 1.6; padding: 0 20px;">
+    <div style="text-align: center;">
+      <img src="/img/avatar.jpg" alt="头像" style="width: 80px; border-radius: 50%; margin-bottom: 10px;" />
       <h1>{{ title }}</h1>
-    {% endif %}
+    </div>
 
     {{ content | safe }}
 
-    {% if collections.posts %}
-      <hr />
-      <ul>
-        {% for post in collections.posts | reverse %}
-          <li>
-            {{ post.date | date("yy.MM.dd") }} -
-            <a href="{{ post.url }}">{{ post.data.title }}</a>
-          </li>
-        {% endfor %}
-      </ul>
-    {% endif %}
+    <hr />
+    <ul>
+      {% for post in collections.posts | reverse %}
+        <li>
+          {{ post.date | date: "%y.%m.%d" }} -
+          <a href="{{ post.url }}">{{ post.data.title }}</a>
+        </li>
+      {% endfor %}
+    </ul>
   </body>
 </html>

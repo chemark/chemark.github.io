@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>博客搭建与管理指南</title>
+    <style>
+      .home-link {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        text-decoration: none;
+        color: #007acc;
+        font-size: 14px;
+        background-color: #f5f5f5;
+        padding: 5px 10px;
+        border-radius: 4px;
+      }
+      .home-link:hover {
+        background-color: #e5e5e5;
+      }
+      body {
+        position: relative;
+      }
+    </style>
+  </head>
+  <body style="max-width: 720px; margin: 40px auto; font-family: -apple-system, BlinkMacSystemFont, Helvetica, sans-serif; line-height: 1.6; padding: 0 20px;">
+    <a href="../../" class="home-link">返回首页</a>
+    <div>
+      <img src="../../img/avatar.png" alt="头像" style="width: 80px; border-radius: 50%; margin-bottom: 10px; display: block; margin-left: auto; margin-right: auto;" />
+      <h1 style="text-align: left;">博客搭建与管理指南</h1>
+    </div>
+
+    <!-- 标题已在上方显示 -->博客搭建与管理指南</h1>
+<p>本文档总结了使用GitHub Pages搭建和管理个人博客的关键步骤和命令，方便日后查阅参考。</p>
+<h2>1. 添加新文章到博客</h2>
+<h3>使用脚本添加文章</h3>
+<pre><code class="language-bash">python3 scripts/update_blog.py &quot;文章路径.md&quot; 文章目录名 &quot;发布日期&quot;
+</code></pre>
+<p>例如：</p>
+<pre><code class="language-bash">python3 scripts/update_blog.py &quot;/Users/xingshuhao/Documents/博客文章/ChatGPT 眼中的星树浩.md&quot; chatgpt-view &quot;2025年04月12日&quot;
+</code></pre>
+<h3>提交并推送更改</h3>
+<pre><code class="language-bash">git add .
+git commit -m &quot;添加新文章：文章标题&quot;
+git push
+</code></pre>
+<h2>2. 删除文章</h2>
+<h3>删除文章目录和文件</h3>
+<pre><code class="language-bash"># 删除文章目录
+rm -rf posts/要删除的文章目录
+
+# 删除Markdown源文件
+rm -f posts/要删除的文件.md
+</code></pre>
+<h3>更新首页文章列表</h3>
+<p>需要编辑<code>index.html</code>文件，删除不需要的文章链接。</p>
+<h3>更新其他文章页面底部的文章列表</h3>
+<p>需要编辑每篇保留文章的<code>index.html</code>文件，更新底部的文章列表。</p>
+<h3>提交并推送更改</h3>
+<pre><code class="language-bash">git add .
+git commit -m &quot;删除文章：文章标题&quot;
+git push
+</code></pre>
+<h2>3. Markdown写作指南</h2>
+<h3>基础语法</h3>
+<h4>标题</h4>
+<pre><code class="language-markdown"># 一级标题 (最大)
+## 二级标题
+### 三级标题
+#### 四级标题
+##### 五级标题
+###### 六级标题 (最小)
+</code></pre>
+<h4>段落和换行</h4>
+<p>段落之间用一个空行分隔：</p>
+<pre><code class="language-markdown">这是第一段文字。
+
+这是第二段文字。
+</code></pre>
+<p>如果想在段落内换行，可以在行末添加两个空格，然后回车：</p>
+<pre><code class="language-markdown">这是一行文字，  
+这是新的一行。
+</code></pre>
+<h4>强调文本</h4>
+<pre><code class="language-markdown">*斜体文字* 或 _斜体文字_
+**粗体文字** 或 __粗体文字__
+***粗斜体文字*** 或 ___粗斜体文字___
+</code></pre>
+<h4>列表</h4>
+<p>无序列表：</p>
+<pre><code class="language-markdown">- 项目1
+- 项目2
+  - 子项目A
+  - 子项目B
+</code></pre>
+<p>有序列表：</p>
+<pre><code class="language-markdown">1. 第一项
+2. 第二项
+3. 第三项
+</code></pre>
+<h4>链接</h4>
+<pre><code class="language-markdown">[链接文字](https://www.example.com)
+</code></pre>
+<h4>图片</h4>
+<pre><code class="language-markdown">![替代文字](图片URL)
+</code></pre>
+<h4>引用</h4>
+<pre><code class="language-markdown">&gt; 这是一段引用文字。
+&gt; 
+&gt; 这是引用的第二段。
+</code></pre>
+<h4>代码</h4>
+<p>行内代码：</p>
+<pre><code class="language-markdown">使用 `print(&quot;Hello World&quot;)` 命令
+</code></pre>
+<p>代码块：</p>
+<pre><code class="language-markdown">```python
+def hello():
+    print(&quot;Hello, World!&quot;)
+```
+</code></pre>
+<h4>水平线</h4>
+<pre><code class="language-markdown">---
+</code></pre>
+<h3>高级语法</h3>
+<h4>表格</h4>
+<pre><code class="language-markdown">| 姓名 | 年龄 | 职业 |
+| --- | --- | --- |
+| 张三 | 25 | 工程师 |
+| 李四 | 30 | 设计师 |
+</code></pre>
+<h4>任务列表</h4>
+<pre><code class="language-markdown">- [x] 已完成任务
+- [ ] 未完成任务
+</code></pre>
+<h2>4. 博客文章工作流</h2>
+<ol>
+<li>在VSCode中使用Markdown格式编写文章</li>
+<li>保存文件到适当位置</li>
+<li>使用脚本将文章添加到博客</li>
+<li>提交并推送到GitHub</li>
+<li>访问网站查看更新</li>
+</ol>
+<h2>5. 常见问题解决</h2>
+<h3>文章不显示或显示错误</h3>
+<ul>
+<li>检查Markdown格式是否正确</li>
+<li>确保文章以<code># 标题</code>开头</li>
+<li>检查脚本执行是否成功</li>
+<li>确认git推送是否成功</li>
+<li>清除浏览器缓存（Ctrl+F5或Cmd+Shift+R）</li>
+</ul>
+<h3>删除文章后仍然显示</h3>
+<ul>
+<li>确保更新了首页和其他文章页面底部的文章列表</li>
+<li>检查是否有遗漏的文件或目录</li>
+<li>清除浏览器缓存</li>
+</ul>
+<h2>6. 自定义域名（未来可选）</h2>
+<p>如果将来想添加自定义域名，可以考虑：</p>
+<ol>
+<li>使用Netlify（最简单选项）</li>
+<li>使用Freenom注册免费顶级域名</li>
+<li>配置DNS设置指向GitHub Pages</li>
+</ol>
+<h2>7. 有用的Git命令</h2>
+<pre><code class="language-bash"># 查看状态
+git status
+
+# 查看变更
+git diff
+
+# 查看提交历史
+git log
+
+# 撤销未提交的更改
+git checkout -- 文件名
+
+# 创建新分支
+git checkout -b 分支名
+
+# 切换分支
+git checkout 分支名
+
+# 合并分支
+git merge 分支名
+</code></pre>
+<hr />
+<p>希望这个指南对您有所帮助！如有任何问题，可以随时向AI助手咨询。</p>
+
+    <hr />
+    <ul style="list-style-type: disc;">
+        <li>
+          <a href="../../posts/blog-guide/">博客搭建与管理指南</a>
+          <div style="font-size: 0.8em; color: #666; margin-top: 3px;">2025年04月14日</div>
+        </li>
+        <li>
+          <a href="../../posts/study/">markdown 写作指南：轻松更新你的博客</a>
+          <div style="font-size: 0.8em; color: #666; margin-top: 3px;">mark</div>
+        </li>
+        <li>
+          <a href="../../posts/chatgpt-view/">ChatGPT 眼中的星树浩</a>
+          <div style="font-size: 0.8em; color: #666; margin-top: 3px;">2025年04月12日</div>
+        </li>
+        <li>
+          <a href="../../posts/example-article/">这是一篇示例文章</a>
+          <div style="font-size: 0.8em; color: #666; margin-top: 3px;">2025年03月01日</div>
+        </li>
+        <li>
+          <a href="../../posts/new-post/">我的新博客文章</a>
+          <div style="font-size: 0.8em; color: #666; margin-top: 3px;">2025年02月01日</div>
+        </li>
+        <li>
+          <a href="../../posts/chatgpt/">ChatGPT 眼中的星树浩</a>
+          <div style="font-size: 0.8em; color: #666; margin-top: 3px;">2025年01月15日</div>
+        </li>
+        <li>
+          <a href="../../posts/2024/">我的 2024</a>
+          <div style="font-size: 0.8em; color: #666; margin-top: 3px;">2024年12月24日</div>
+        </li>
+        <li>
+          <a href="../../posts/ai/">AI 给我的启发</a>
+          <div style="font-size: 0.8em; color: #666; margin-top: 3px;">2024年11月11日</div>
+        </li>
+        <li>
+          <a href="../../posts/growth/">自我成长日志</a>
+          <div style="font-size: 0.8em; color: #666; margin-top: 3px;">2023年09月15日</div>
+        </li>
+    </ul>
+
+  </body>
+</html>

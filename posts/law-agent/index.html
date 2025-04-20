@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>我如何用国产大模型构建一个法规智能体（并踩了 7 个坑）</title>
+    <style>
+      .home-link {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        text-decoration: none;
+        color: #007acc;
+        font-size: 14px;
+        background-color: #f5f5f5;
+        padding: 5px 10px;
+        border-radius: 4px;
+      }
+      .home-link:hover {
+        background-color: #e5e5e5;
+      }
+      body {
+        position: relative;
+      }
+    </style>
+  </head>
+  <body style="max-width: 720px; margin: 40px auto; font-family: -apple-system, BlinkMacSystemFont, Helvetica, sans-serif; line-height: 1.6; padding: 0 20px;">
+    <a href="../../" class="home-link">返回首页</a>
+    <div>
+      <img src="../../img/avatar.png" alt="头像" style="width: 80px; border-radius: 50%; margin-bottom: 10px; display: block; margin-left: auto; margin-right: auto;" />
+      <h1 style="text-align: left;">我如何用国产大模型构建一个法规智能体（并踩了 7 个坑）</h1>
+    </div>
+
+    <!-- 标题已在上方显示 -->我如何用国产大模型构建一个法规智能体（并踩了 7 个坑）</h1>
+<blockquote>
+<p>一次从 0 到 1 的认知系统构建实验<br />
+by <a href="https://github.com/chemark">chemark</a></p>
+</blockquote>
+<hr />
+<h2>🧠 起点：一个理论引发的好奇</h2>
+<p>我在网上看到一个观点：Meta 把 Llama 称为"开源"，可能是因为欧盟《人工智能法案》（AI Act）对"开源模型"有特殊豁免条款，而这些豁免并不要求符合 OSI 的开源定义。</p>
+<p>我不想只听别人说，我想自己验证。</p>
+<p>于是我决定：</p>
+<ul>
+<li>抓取 AI Act 的原文</li>
+<li>提取所有提到 "open source" 的段落</li>
+<li>用大模型分析它的定义、豁免条件、合规边界</li>
+<li>全流程自己跑，不依赖 OpenAI，不用 ChatGPT 网页版</li>
+</ul>
+<hr />
+<h2>🛠️ 技术栈选型</h2>
+<ul>
+<li><strong>MacBook 本地终端</strong>：一切从命令行开始，干净、可控  </li>
+<li><strong>curl + lynx</strong>：抓取并转为纯文本  </li>
+<li><strong>grep + ttok</strong>：关键词提取 + token 估算  </li>
+<li><strong>SiliconFlow + DeepSeek-R1-Distill-Qwen-7B</strong>：国产大模型，免费，支持 32K 上下文  </li>
+<li><strong>Python + OpenAI SDK（兼容接口）</strong>：调用逻辑清晰，易于扩展  </li>
+</ul>
+<hr />
+<h2>🧩 全流程拆解 + 我踩过的坑</h2>
+<h3>1. 抓取法规原文</h3>
+<pre><code class="language-bash">curl 'https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=OJ:L_202401689' &gt; ai_act.html
+lynx -dump ai_act.html &gt; ai_act.txt
+</code></pre>
+<p>问题 1：lynx 报错找不到命令✅ 解决：先安装 Homebrew，再安装 lynx</p>
+<pre><code class="language-bash">/bin/bash -c &quot;$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)&quot;
+brew install lynx
+</code></pre>
+<h3>2. 提取关键词段落</h3>
+<pre><code class="language-bash">grep -i -C 5 'open source' ai_act.txt &gt; open_source_mentions.txt
+</code></pre>
+<p>问题 2：提取结果是空的✅ 解决：改用更宽松的关键词</p>
+<pre><code class="language-bash">grep -i -C 5 'open' ai_act.txt &gt; open_source_mentions.txt
+</code></pre>
+<h3>3. 估算 token 数量</h3>
+<pre><code class="language-bash">ttok &lt; open_source_mentions.txt
+</code></pre>
+<p>问题 3：ttok 没装✅ 解决：</p>
+<pre><code class="language-bash">pip install ttok
+</code></pre>
+<h3>4. 编写 Python 脚本调用模型</h3>
+<pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI(
+    base_url=&quot;https://api.siliconflow.cn/v1&quot;,
+    api_key=&quot;sk-你的密钥&quot;
+)
+
+with open(&quot;open_source_mentions.txt&quot;, &quot;r&quot;, encoding=&quot;utf-8&quot;) as f:
+    content = f.read()
+
+response = client.chat.completions.create(
+    model=&quot;deepseek-ai/DeepSeek-R1-Distill-Qwen-7B&quot;,
+    messages=[
+        {&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;你是一位法律分析助手，擅长从法规中提取结构化信息。&quot;},
+        {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: f&quot;&quot;&quot;请总结以下段落中关于 open source 的定义、豁免条件、许可证要求、对模型发布者的影响：
+
+{content}
+&quot;&quot;&quot;}
+    ],
+    temperature=0.3,
+    max_tokens=2048
+)
+
+print(response.choices[0].message.content)
+</code></pre>
+<h3>5. 模型调用失败：400 错误</h3>
+<p>问题 4：BadRequestError: model does not exist✅ 解决：模型名必须精确写成：<code>model="deepseek-ai/DeepSeek-R1-Distill-Qwen-7B"</code></p>
+<h3>6. 脚本报错：SyntaxError: invalid decimal literal</h3>
+<p>问题 5：我写了 ‎⁠max_tokens = 16,384⁠✅ 解决：Python 不支持逗号分隔数字，改成：max_tokens = 16384</p>
+<h3>7. 模型输出为空</h3>
+<p>问题 6：终端没报错，但输出是空的✅ 解决：‎⁠open_source_mentions.txt⁠ 是空的，重新提取关键词并确认文件非空。</p>
+<h2>✅ 最终输出（节选）</h2>
+<p>模型输出了以下关键点：
+- 法规中并未列出具体许可证（如 MIT、GPL），而是用功能性定义来界定"免费和开源"
+- 如果模型的参数、架构、使用信息是公开的，并允许复制、修改、再分发，即可视为"开源"
+- 即使要求署名或遵守相同分发条款，也不影响其"开源"地位
+- 某些情况下，开源模型可豁免高风险 AI 系统的监管要求</p>
+<h2>🧠 我的思考</h2>
+<p>这次实验让我意识到：
+- 大模型不是答案，它是认知压缩器
+- 法规不是障碍，它是产品设计的边界条件
+- 国产模型完全可以胜任结构化语义任务
+- 构建认知系统的关键，不是 prompt，而是数据链 + 调度逻辑</p>
+<h2>🚀 下一步我想做什么？</h2>
+<ul>
+<li>把这套流程打包成 CLI 工具</li>
+<li>支持多模型（OpenAI / Claude / DeepSeek）对比分析</li>
+<li>做一个"法规摘要 API"，输入链接，输出结构化摘要</li>
+<li>构建一个"模型许可证合规性检查器"</li>
+</ul>
+<h2>💬 如果你也想试试</h2>
+<p>欢迎 fork 我的 repo  https://github.com/chemark/chemark.github.io，或者留言交流。</p>
+
+    <hr />
+    <ul style="list-style-type: disc;">
+        <li>
+          <a href="../../posts/law-agent/">我如何用国产大模型构建一个法规智能体（并踩了 7 个坑）</a>
+          <div style="font-size: 0.8em; color: #666; margin-top: 3px;">2025年04月12日</div>
+        </li>
+        <li>
+          <a href="../../posts/blog-guide/">博客搭建与管理指南</a>
+          <div style="font-size: 0.8em; color: #666; margin-top: 3px;">2025年04月12日</div>
+        </li>
+        <li>
+          <a href="../../posts/study/">markdown 写作指南：轻松更新你的博客</a>
+          <div style="font-size: 0.8em; color: #666; margin-top: 3px;">2025年04月12日</div>
+        </li>
+        <li>
+          <a href="../../posts/chatgpt-view/">ChatGPT 眼中的星树浩</a>
+          <div style="font-size: 0.8em; color: #666; margin-top: 3px;">2025年04月12日</div>
+        </li>
+    </ul>
+
+  </body>
+</html>

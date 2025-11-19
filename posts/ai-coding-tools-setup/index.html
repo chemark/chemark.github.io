@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>终端 AI 编程助手配置指南：Claude Code & Codex</title>
+    <style>
+      .home-link {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        text-decoration: none;
+        color: #007acc;
+        font-size: 14px;
+        background-color: #f5f5f5;
+        padding: 5px 10px;
+        border-radius: 4px;
+      }
+      .home-link:hover {
+        background-color: #e5e5e5;
+      }
+      body {
+        position: relative;
+      }
+    </style>
+  </head>
+  <body style="max-width: 720px; margin: 40px auto; font-family: -apple-system, BlinkMacSystemFont, Helvetica, sans-serif; line-height: 1.6; padding: 0 20px;">
+    <a href="../../" class="home-link">返回首页</a>
+    <div>
+      <img src="../../img/avatar.png" alt="头像" style="width: 80px; border-radius: 50%; margin-bottom: 10px; display: block; margin-left: auto; margin-right: auto;" />
+      <h1 style="text-align: left;">终端 AI 编程助手配置指南：Claude Code & Codex</h1>
+    </div>
+
+    <!-- 标题已在上方显示 -->终端 AI 编程助手配置指南：Claude Code &amp; Codex</h1>
+<h2>使用场景：</h2>
+<ol>
+<li>在终端 terminal 和 warp 使用 claude code 和 codex cli</li>
+<li>在 IDE vscode 的终端使用claude code 和 codex</li>
+<li>在 IDE vscode 的插件 cline里直接使用模型 API</li>
+<li>放弃在 IDE vscode 使用 codex 和 claude code插件，因为需要订阅昂贵的会员</li>
+<li>在 cursor 使用插件 cline</li>
+</ol>
+<h2>claude code</h2>
+<p>目前终端 claude code使用的是KAT-Coder,配置文件在/Users/xingshuhao/.secrets。
+目前是免费使用 API 随时会挂掉，使用命令是 claude。配置方法见<a href="https://streamlake.com/document/WANQING/me6ymdjrqv8lp4iq0o9">官网指南</a></p>
+<p>目前终端 codex 使用的是 minimax M2,没有每月续订，下个月12月19日到期，使用命令是codex --profile m2。配置方法是：
+1. 修改配置文件/Users/xingshuhao/.codex/config.toml，清空 codex 关于 OpenAI 的设置，添加以下配置</p>
+<pre><code>[model_providers.minimax]
+name = &quot;MiniMax Chat Completions API&quot;
+base_url = &quot;https://api.minimaxi.com/v1&quot;
+env_key = &quot;MINIMAX_API_KEY&quot;
+wire_api = &quot;chat&quot;
+requires_openai_auth = false
+request_max_retries = 4
+stream_max_retries = 10
+stream_idle_timeout_ms = 300000
+
+[profiles.m2]
+model = &quot;codex-MiniMax-M2&quot;
+model_provider = &quot;minimax&quot;
+</code></pre>
+<ol>
+<li>导入环境变量，在文件 zshrc 里添加export MINIMAX_API_KEY="我的 minimax API"</li>
+</ol>
+<h3>现在发现有以下便捷方式使用：</h3>
+<ol>
+<li>使用<a href="https://github.com/alchaincyf/glm-claude">GLM code</a> ,可以在终端里使用命令claude 和glm同时使用 claude code 和GLM code ,不会互相影响，<a href="https://mp.weixin.qq.com/s/jXs_dnKRS-IYivopz1g9RA">这是教程</a>。</li>
+<li>使用<a href="https://mp.weixin.qq.com/s?__biz=MzI4NjAxNjY4Nw==&amp;mid=2650242330&amp;idx=1&amp;sn=24f19e9a16ab76e80ce2e5a16ca13c4a&amp;chksm=f214807e350b2a9fbde9b0b492c6c425b682e7ec12a8a1e8e64b427951e28dd38c4afcdf12cf&amp;scene=90&amp;xtrack=1&amp;sessionid=1762850864&amp;subscene=93&amp;clicktime=1762851247&amp;enterid=1762851247&amp;flutter_pos=4&amp;biz_enter_id=4&amp;ranksessionid=1762850964&amp;jumppath=20020_1762850964623%2C1104_1762851031547%2C20020_1762851044787%2C1104_1762851245926&amp;jumppathdepth=4&amp;ascene=56&amp;devicetype=iOS26.0.1&amp;version=18004034&amp;nettype=WIFI&amp;abtest_cookie=AAACAA%3D%3D&amp;lang=zh_CN&amp;countrycode=CN&amp;fontScale=100&amp;exportkey=n_ChQIAhIQJaohqQCma2zyp%2FEpJPw32hLhAQIE97dBBAEAAAAAAGatE1HGacoAAAAOpnltbLcz9gKNyK89dVj0jLpw9Q6OW%2BEBxJXMaQ1%2F%2F3WIjrA1uwHSsdD9lq9o8F%2Fwj3ioXcACb3N0dUaDh8jagkYrXplJNSQqekVCvtRFfkDRBvmcp7qUyaW0IiVaUPyZ6bqUHjgZE6aalRQZbc%2BTPtY1o9wE21XjnITOWggWPbOLNSdreSDr6wqJyej1Fpt4oPe%2BYo%2BFFRezbuL86QCjD0OS4BXScs59aHNTgTFRmVZmiO06UGmE2FB6yAVf77xRMiMkugpYWh3ubQ%3D%3D&amp;pass_ticket=ERQeLy3p3BVr44phT2rdBG%2BBp13WWEQcpIcgyiLmVbLma004zVL3%2FCgu9Z7rjXid&amp;wx_header=3">阮一峰的方式</a>，将国产模型接入 claude code</li>
+<li><a href="https://mp.weixin.qq.com/s?__biz=MzI4NjAxNjY4Nw==&amp;mid=2650242455&amp;idx=1&amp;sn=9fd7914e0a13386489ad3c89a57746f9&amp;chksm=f27b8678c048ec073dc53b02bbca671d6e10db7fe1f543327b612372166d06e1d703597bf447&amp;scene=90&amp;xtrack=1&amp;req_id=1763524171814433&amp;sessionid=1763524198&amp;subscene=93&amp;clicktime=1763524566&amp;enterid=1763524566&amp;flutter_pos=0&amp;biz_enter_id=4&amp;ranksessionid=1763524171&amp;jumppath=1001_1763524196545%2C1104_1763524199350%2C20020_1763524214219%2C1104_1763524521402&amp;jumppathdepth=4&amp;ascene=56&amp;devicetype=iOS26.0.1&amp;version=1800412a&amp;nettype=WIFI&amp;abtest_cookie=AAACAA%3D%3D&amp;lang=zh_CN&amp;countrycode=CN&amp;fontScale=100&amp;exportkey=n_ChQIAhIQbb3IZyjAuqHRO3AJsf%2BKmRLhAQIE97dBBAEAAAAAACchGeHqTgUAAAAOpnltbLcz9gKNyK89dVj0ABPQVqnI24hT9TIMJgUcasQ1r0m0ajbjXvfsNSJzdEyqMOdwyFXsiw3PXovPoZTGEopBzSIartieDJ3raS0wgBHASn38NSyVh4OWULWgjWLKACQcZ7w84bNTEZ%2FdKQOtMER4yXRn5YD1HPyS5IqxbxDRMEg%2Fi8iygosUZdL0JlVtC9m9tmKnk4zLYLDZ1NXw6jr56L2SXZII7xWM547jgBde%2Bl61%2BAnXDGdEkGmFp0SXFvBYZk33SVuEUA%3D%3D&amp;pass_ticket=g4nkgUiFZ1aqyeP43LgR8fFRRbijC0vZ8mRglmYRxJntu9u52%2BQwPW7tVjnImg5B&amp;wx_header=3">VS Code 使用国产大模型 MiniMax M2 教程</a>，不使用插件</li>
+<li>使用<a href="https://github.com/farion1231/cc-switch">CC switch</a>和<a href="https://github.com/djyde/ccmate">CC mate</a>,</li>
+</ol>
+<p>待办：KAT-Coder随时替换成便宜的模型，不再订阅 claude 和 ChatGPT。
+有以下模型备选：
+1. <a href="https://platform.moonshot.ai/docs/overview">kimi</a>
+2. <a href="https://bigmodel.cn/glm-coding?utm_source=bigModel&amp;utm_medium=Frontend%20Model%20Group&amp;utm_content=glm-code&amp;utm_campaign=Platform_Ops&amp;_channel_track_key=bW5juXcZ">glm</a>
+3. <a href="https://github.com/QwenLM/qwen-code">qwen</a> 
+4. <a href="https://platform.minimax.io/docs/coding-plan/intro">minimax </a>
+5. <a href="https://www.streamlake.ai/product/kat-coder#packages">kat coder</a>
+6. <a href="https://www.volcengine.com/activity/codingplan">doubao seed code</a></p>
+<h2>codex</h2>
+<p>可以在 claude code 和 codex 中同时使用 minimax M2,<a href="https://mp.weixin.qq.com/s?__biz=MzkwMzE4NjU5NA==&amp;mid=2247511736&amp;idx=1&amp;sn=9ca91fc44e9e3427212d6978472711f4&amp;chksm=c15a328ce35a519f6bf42187fae828f92e965308db1a0f644286367ea49b702c7337ca9f0359&amp;scene=90&amp;xtrack=1&amp;sessionid=1761644385&amp;subscene=93&amp;clicktime=1761644395&amp;enterid=1761644395&amp;flutter_pos=1&amp;biz_enter_id=4&amp;ranksessionid=1761644329&amp;jumppath=1123_1761644379395%2C1003_1761644380810%2C1001_1761644381324%2C1104_1761644386501&amp;jumppathdepth=4&amp;ascene=56&amp;devicetype=iOS26.0.1&amp;version=1800402c&amp;nettype=WIFI&amp;abtest_cookie=AAACAA%3D%3D&amp;lang=zh_CN&amp;countrycode=CN&amp;fontScale=100&amp;exportkey=n_ChQIAhIQQmqKgavWY%2FpOBbF6xDziHRLhAQIE97dBBAEAAAAAAM9wJPCsrHAAAAAOpnltbLcz9gKNyK89dVj09BP1Wax16KAZ0mcNMCEpy5Mog%2FcLCu2YPvMP0oz5ESyMtkcUkOCfHujyLQ9yAYm7MwGURAxWTP9ryVx8do%2FCMSHUurNN4AaxYort5AGc1KWI%2B3KFoWFdFw%2Bx%2FAsg%2FThQXxmzxGtcS1oBixPoyIsGU50Oa7sIQF7XBJ5yoxX0DspqMIbjF2uJONSbrNOjdpmVOBobG%2BsWC9iJyugvuhwwyCxsYpV1Zst9YkIouDPIF5%2BKS8OWkXSvaWE0fw%3D%3D&amp;pass_ticket=7CooLa1XBAPveaQdly%2F3oGVm%2FGP8gllNJ%2BgbML2C4IhMbwnN8hpIQEavf%2FX8PMGo&amp;wx_header=3">这是教程</a></p>
+
+    <hr />
+    <ul style="list-style-type: disc;">
+        <li>
+          <a href="../../posts/ai-coding-tools-setup/">终端 AI 编程助手配置指南：Claude Code & Codex</a>
+          <div style="font-size: 0.8em; color: #666; margin-top: 3px;">2025年11月19日</div>
+        </li>
+        <li>
+          <a href="../../posts/law-agent/">我如何用国产大模型构建一个法规智能体（并踩了 7 个坑）</a>
+          <div style="font-size: 0.8em; color: #666; margin-top: 3px;">2025年04月12日</div>
+        </li>
+        <li>
+          <a href="../../posts/blog-guide/">博客搭建与管理指南</a>
+          <div style="font-size: 0.8em; color: #666; margin-top: 3px;">2025年04月12日</div>
+        </li>
+        <li>
+          <a href="../../posts/study/">markdown 写作指南：轻松更新你的博客</a>
+          <div style="font-size: 0.8em; color: #666; margin-top: 3px;">2025年04月12日</div>
+        </li>
+        <li>
+          <a href="../../posts/chatgpt-view/">ChatGPT 眼中的星树浩</a>
+          <div style="font-size: 0.8em; color: #666; margin-top: 3px;">2025年04月12日</div>
+        </li>
+    </ul>
+
+  </body>
+</html>

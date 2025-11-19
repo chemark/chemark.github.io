@@ -13,7 +13,6 @@ import sys
 import os
 import re
 import glob
-import subprocess
 from datetime import datetime
 import markdown
 import json
@@ -193,14 +192,12 @@ for post_dir in glob.glob("posts/*/"):
             
             print(f"已更新文章列表: {post_html_file}")
 
-# 提交并推送更改
-try:
-    subprocess.run(["git", "add", "."], check=True)
-    subprocess.run(["git", "commit", "-m", f"添加新文章: {article_title}"], check=True)
-    subprocess.run(["git", "push", "origin", "main"], check=True)
-    print("已提交并推送更改到GitHub")
-except subprocess.CalledProcessError as e:
-    print(f"Git操作失败: {e}")
-
-print(f"文章已成功添加: {article_title}")
-print(f"您可以在以下地址访问: https://chemark.github.io/posts/{article_url_name}/")
+print(f"\n✅ 文章已成功添加: {article_title}")
+print(f"📁 文章目录: {article_dir}/index.html")
+print(f"🌐 发布后访问地址: https://chemark.github.io/posts/{article_url_name}/")
+print(f"\n📝 下一步操作：")
+print(f"1. 检查生成的文章是否正确")
+print(f"2. 使用以下命令提交并推送到 GitHub：")
+print(f"   git add .")
+print(f"   git commit -m \"添加新文章: {article_title}\"")
+print(f"   git push")
